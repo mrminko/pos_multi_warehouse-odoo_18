@@ -41,7 +41,6 @@ class ProductProduct(models.Model):
             ('product_id', '=', self.id),
             ('location_id', '=', config.picking_type_id.default_location_src_id.id)
         ])
-        print("=====test", quant.inventory_quantity_auto_apply)
         # Warehouses
         warehouse_list = [
             {'id': w.id,

@@ -26,19 +26,18 @@ patch(ControlButtons.prototype, {
             operation_type_id
         ]);
         if(result) {
-            this.pos.warehouse_name = result;
+            this.pos.from_location_id = result.from_location_id;
+            this.pos.warehouse_name = result.name;
         }
     },
 
     async onClickWarehouse() {
-        // const selectionList = this.getPricelistList();
         const warehouses = await this.fetchWarehouses()
         const payload = await makeAwaitable(this.dialog, SelectionPopup, {
             title: _t("Select the warehouse"),
             list: warehouses,
         });
         if (payload) {
-            console.log("clicked", payload);
             await this.switch_warehouse(payload)
         }
     }

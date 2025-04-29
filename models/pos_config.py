@@ -1,5 +1,3 @@
-from xlwt.ExcelFormulaLexer import false_pattern
-
 from odoo import api, fields, models
 
 class PosConfig(models.Model):
@@ -13,4 +11,5 @@ class PosConfig(models.Model):
         if not operation:
             return False
         self.picking_type_id = operation.id
-        return self.picking_type_id.name
+        result = {"from_location_id": self.picking_type_id.default_location_src_id.id, "name":self.picking_type_id.name}
+        return result

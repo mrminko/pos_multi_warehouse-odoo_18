@@ -26,7 +26,7 @@ patch(ControlButtons.prototype, {
             operation_type_id
         ]);
         if(result) {
-            this.pos.from_location_id = result.from_location_id;
+            this.pos.from_location = result.from_location;
             this.pos.warehouse_name = result.name;
         }
     },

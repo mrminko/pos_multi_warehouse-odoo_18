@@ -7,8 +7,6 @@ import {computeComboItems} from "@point_of_sale/app/models/utils/compute_combo_i
 import {ScaleScreen} from "@point_of_sale/app/screens/scale_screen/scale_screen";
 import {
     makeAwaitable,
-    ask,
-    makeActionAwaitable,
 } from "@point_of_sale/app/store/make_awaitable_dialog";
 
 patch(PosStore.prototype, {
@@ -19,7 +17,7 @@ patch(PosStore.prototype, {
             [['id', '=', this.config.picking_type_id.id]],
             ['id', 'name', 'default_location_src_id']
         )
-        this.from_location_id = wh[0].default_location_src_id[0];
+        this.from_location = {id: wh[0].default_location_src_id[0]};
         this.warehouse_name = wh[0].name;
     },
 
@@ -237,11 +235,8 @@ patch(PosStore.prototype, {
 
             values.price_unit = price;
         }
-        values.from_location = this.from_location_id;
-        console.log("=====from", values.from_location, this.from_location_id)
-
+        values.from_location = this.from_location.id;
         const line = this.data.models["pos.order.line"].create({...values, order_id: order});
-        console.log("=====line", line)
         line.setOptions(options);
         this.selectOrderLine(order, line);
         if (configure) {

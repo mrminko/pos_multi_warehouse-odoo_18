@@ -4,3 +4,8 @@ class PosOrderLine(models.Model):
     _inherit = 'pos.order.line'
 
     from_location = fields.Many2one("stock.location", string="From Location")
+
+    @api.model
+    def _load_pos_data_fields(self, config_id):
+        fields = super(PosOrderLine, self)._load_pos_data_fields(config_id)
+        return fields + ['from_location']

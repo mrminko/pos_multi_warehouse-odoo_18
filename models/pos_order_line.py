@@ -5,6 +5,7 @@ class PosOrderLine(models.Model):
 
     from_location = fields.Many2one("stock.location", string="From Location")
 
+    #add field to load into pos frontend
     @api.model
     def _load_pos_data_fields(self, config_id):
         fields = super(PosOrderLine, self)._load_pos_data_fields(config_id)

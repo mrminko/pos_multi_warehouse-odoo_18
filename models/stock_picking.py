@@ -9,7 +9,8 @@ class PickingType(models.Model):
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
-    def _has_different_location(self, lines):
+    #to separate stock_moves of a pick according to locations
+    def _has_different_locations(self, lines):
         location = lines[0].from_location
         return any(l.from_location != location for l in lines[1:])
 
@@ -31,24 +32,18 @@ class StockPicking(models.Model):
         return result
 
     def _create_move_from_pos_order_lines(self, lines):
-        print("=====_create_move_from_pos_order_lines", lines)
         self.ensure_one()
         lines_by_product = groupby(sorted(lines, key=lambda l: l.product_id.id), key=lambda l: l.product_id.id)
         move_vals = []
         for dummy, olines in lines_by_product:
             order_lines = self.env['pos.order.line'].concat(*olines)
-            # print("=====order_lines", order_lines)
-            if len(order_lines) > 1 and self._has_different_location(order_lines):
+            if len(order_lines) > 1 and self._has_different_locations(order_lines):
                 v = self._prepare_different_location_stock_move_vals(order_lines)
                 move_vals += v
-                print("=====has_v", v)
             else:
                 move_vals.append(self._prepare_stock_move_vals(order_lines[0], order_lines))
-        # print("=====move_vals", move_vals)
         moves = self.env['stock.move'].create(move_vals)
-        # print("=====moves", moves)
         confirmed_moves = moves._action_confirm()
-        # print("=====confirmed_moves", confirmed_moves)
         confirmed_moves._add_mls_related_to_order(lines, are_qties_done=True)
         confirmed_moves.picked = True
         self._link_owner_on_return_picking(lines)

@@ -19,17 +19,23 @@ patch(PosOrderline, {
 patch(PosOrderline.prototype, {
     setup(vals) {
         super.setup(vals);
-        if(this.product_id) {
+        if (this.product_id) {
             this.attachWarehouseLocation(vals);
         }
     },
 
+    //don't merge the same product but with different locations
     can_be_merged_with(orderline) {
         let result = super.can_be_merged_with(orderline);
         return result && this.raw.from_location.id === orderline.from_location;
     },
 
+    //cannot set this.from_location due to serialize() function of Base component
     attachWarehouseLocation(vals) {
-        this.raw.from_location = {id:vals.from_location}
+        this.raw.from_location = {id: vals.from_location}
+    },
+
+    getLocationId() {
+        return this.raw.from_location.id
     }
 });

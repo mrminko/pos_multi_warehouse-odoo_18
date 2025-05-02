@@ -5,11 +5,20 @@ import {PosStore} from "@point_of_sale/app/store/pos_store";
 import {ComboConfiguratorPopup} from "@point_of_sale/app/store/combo_configurator_popup/combo_configurator_popup";
 import {computeComboItems} from "@point_of_sale/app/models/utils/compute_combo_items";
 import {ScaleScreen} from "@point_of_sale/app/screens/scale_screen/scale_screen";
-import {
-    makeAwaitable,
-} from "@point_of_sale/app/store/make_awaitable_dialog";
+import {makeAwaitable} from "@point_of_sale/app/store/make_awaitable_dialog";
+import {WarningDialog} from "@web/core/errors/error_dialogs";
+import {_t} from "@web/core/l10n/translation";
+import {AlertDialog} from "@web/core/confirmation_dialog/confirmation_dialog";
 
 patch(PosStore.prototype, {
+    async isQtyAvailable(product_id, location_id, qty) {
+        return await this.env.services.orm.call(
+            "product.product",
+            "is_qty_available",
+            [product_id, location_id, qty]
+        )
+    },
+
     async processServerData() {
         await super.processServerData();
         let wh = await this.env.services.orm.searchRead(
@@ -236,6 +245,21 @@ patch(PosStore.prototype, {
             values.price_unit = price;
         }
         values.from_location = this.from_location.id;
+        //Early guard: do not create order lines if new quantity exceeds the location quantity
+        const order_qty = order.lines
+                .filter(l => l.product_id.id === values.product_id.id && l.raw.from_location.id === values.from_location)
+                .reduce((total, item) => total + item.qty, 0);
+            const available = await this.isQtyAvailable(
+                values.product_id.id,
+                values.from_location,
+                order_qty + values.qty
+            )
+            if(!available){
+                this.dialog.add(WarningDialog, {
+                    title: "Not enough quantity", message: "Product quantity not enough in this warehouse"
+                })
+                return;
+            }
         const line = this.data.models["pos.order.line"].create({...values, order_id: order});
         line.setOptions(options);
         this.selectOrderLine(order, line);
@@ -294,6 +318,4 @@ patch(PosStore.prototype, {
         // FIXME: If merged with another line, this returned object is useless.
         return line;
     }
-
-
 })

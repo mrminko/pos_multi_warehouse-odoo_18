@@ -6,6 +6,15 @@ from datetime import date
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
+    #backend checker incoming products from pos frontend
+    @api.model
+    def is_qty_available(self, product_id, location_id, qty):
+        quant = self.env['stock.quant'].search([
+            ('product_id', '=', product_id),
+            ('location_id', '=', location_id)
+        ])
+        return float(quant.inventory_quantity_auto_apply) >= float(qty)
+
     def get_product_info_pos(self, price, quantity, pos_config_id):
         self.ensure_one()
         config = self.env['pos.config'].browse(pos_config_id)

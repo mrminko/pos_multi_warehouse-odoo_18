@@ -3,7 +3,7 @@
     <t t-name="pos_multi_warehouse.ControlButtons" t-inherit="point_of_sale.ControlButtons" t-inherit-mode="extension">
         <xpath expr="//t[@t-if='props.showRemainingButtons']/div/OrderlineNoteButton" position="before">
             <button t-att-class="buttonClass" t-on-click="() => this.onClickWarehouse()">
-                <i class="fa fa-eject me-1" role="img" aria-label="Choose Warehouse" title="Choose Warehouse" /> Warehouse
+                <i class="fa fa-home me-1" role="img" aria-label="Choose Warehouse" title="Choose Warehouse" /> Warehouse
             </button>
         </xpath>
     </t>

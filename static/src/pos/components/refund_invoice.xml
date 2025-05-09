@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="pos_multi_warehouse.RefundInvoice">
+        <div><strong>Refund Invoice: <t t-esc="refund_invoice"/></strong></div>
+        <div><strong>Amount Due: <t t-esc="refund_invoice_amt_due"/></strong></div>
+    </t>
+</templates>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="pos_multi_warehouse.PaymentScreenMethods" t-inherit="point_of_sale.PaymentScreenMethods" t-inherit-mode="extension">
+        <xpath expr="//div[@class='paymentmethods-container mb-3']" position="after">
+            <t t-if="refund_invoice">
+                <t t-call="pos_multi_warehouse.RefundInvoice"/>
+            </t>
+        </xpath>
+    </t>
+</templates>

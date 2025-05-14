@@ -9,7 +9,8 @@ class PosOrder(models.Model):
         self.ensure_one()
         invoice = self.account_move
         amount_residual = formatLang(
-            self.env, abs(invoice.amount_residual), currency_obj=invoice.currency_id),
+            self.env, abs(invoice.amount_residual), currency_obj=invoice.currency_id
+        )
         return {
             "id": invoice.id,
             "name": invoice.name,
